@@ -1,0 +1,1 @@
+window[document.currentScript.dataset.callback]([["идризово","Идризово",690,41.96083,21.57556]]);

@@ -1,0 +1,1 @@
+window[document.currentScript.dataset.callback]([["јурумлери","Јурумлери",690,41.96722,21.55694]]);

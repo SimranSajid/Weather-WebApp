@@ -1,0 +1,1 @@
+window[document.currentScript.dataset.callback]([["ða lat","Ðà Lạt",3818,11.94646,108.44193],["ðong ha","Ðông Hà",3803,16.81625,107.10031],["ðurici","Ðurići",3718,43.82533,19.41233],["ðurđevo","Ðurđevo",3711,45.32591,20.06532]]);

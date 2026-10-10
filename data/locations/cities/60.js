@@ -1,0 +1,1 @@
+window[document.currentScript.dataset.callback]([["`ajmiyah","`Ajmiyah",2851,24.2167,38.5],["`alya'","`Alya'",2851,23.8236,38.8833],["`ushash","`Ushash",2851,23.5,38.9167],["`ushayrah","`Ushayrah",2851,24.0186,39.6731]]);

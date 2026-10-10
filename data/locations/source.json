@@ -1,0 +1,39 @@
+{
+  "repository": "https://github.com/dr5hn/countries-states-cities-database",
+  "release": "v4.0-export.42",
+  "source": "https://github.com/dr5hn/countries-states-cities-database/releases/download/v4.0-export.42/json-countries%2Bstates%2Bcities.json.gz",
+  "license": "ODbL-1.0",
+  "licenseURL": "https://opendatacommons.org/licenses/odbl/1-0/",
+  "sourceSHA256": "483f5d423b9f63a6af262d67ee3a5488ac7430382fd3f77e10d44f9eace89196",
+  "originalCompressedBytes": 3717145,
+  "originalJSONBytes": 53102795,
+  "processedBytes": 8111332,
+  "indexBytes": 148537,
+  "largestShardBytes": 1041244,
+  "shardCount": 50,
+  "counts": {
+    "countries": 250,
+    "states": 5328,
+    "cities": 152978
+  },
+  "fields": {
+    "countries": [
+      "id",
+      "name",
+      "iso2"
+    ],
+    "states": [
+      "id",
+      "name",
+      "country_id",
+      "first_city_prefix"
+    ],
+    "cities": [
+      "normalized_name",
+      "name",
+      "state_id",
+      "latitude",
+      "longitude"
+    ]
+  }
+}
