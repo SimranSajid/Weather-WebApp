@@ -349,3 +349,30 @@ weatherForm.addEventListener("submit", async function (event) {
 
 });
 
+// ==================== THEME INITIALIZATION ====================
+// Restore the preference before the user interacts with the toggle.
+let savedTheme = null;
+try {
+    savedTheme = localStorage.getItem("theme");
+} catch {
+    // Keep the default dark theme if browser storage is unavailable.
+}
+
+document.body.classList.toggle("light-theme", savedTheme === "light");
+themeToggle.textContent = savedTheme === "light" ? "🌙" : "☀️";
+
+// ==================== THEME TOGGLE ====================
+themeToggle.addEventListener("click", function () {
+    document.body.classList.toggle("light-theme");
+
+    const isLightTheme =
+        document.body.classList.contains("light-theme");
+
+    themeToggle.textContent = isLightTheme ? "🌙" : "☀️";
+
+    try {
+        localStorage.setItem("theme", isLightTheme ? "light" : "dark");
+    } catch {
+        // Theme switching still works if the preference cannot be saved.
+    }
+});
