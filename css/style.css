@@ -1,0 +1,794 @@
+/* =========================================================
+   1. BASIC RESET
+   ========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.6;
+
+    transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
+}
+
+body .weather-card,
+body .detail-card,
+body .search-form {
+    transition:
+        background-color 0.3s ease,
+        color 0.3s ease,
+        border-color 0.3s ease;
+}
+
+button,
+input {
+    font: inherit;
+}
+
+a {
+    color: inherit;
+}
+
+
+/* =========================================================
+   2. COLOR VARIABLES
+   ========================================================= */
+
+:root {
+    --bg-primary: #222831;
+    --bg-secondary: #31363F;
+    --bg-card: #31363F;
+
+    --text-primary: #EEEEEE;
+    --text-secondary: #c7c7c7;
+
+    --accent: #76ABAE;
+    --border-color: #76ABAE;
+
+    --header-bg: #222831;
+    --footer-bg: #1b222b;
+
+    --input-bg: #31363F;
+    --input-text: #EEEEEE;
+
+    --background-color: var(--bg-primary);
+    --surface-color: var(--bg-secondary);
+    --accent-color: var(--accent);
+    --text-color: var(--text-primary);
+    --secondary-text-color: var(--text-secondary);
+    --card-background: rgba(49, 54, 63, 0.72);
+    --accent-transparent: rgba(118, 171, 174, 0.15);
+    --shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+    --transition-speed: 0.25s;
+}
+
+body.light-theme {
+    --bg-primary: #EEEEEE;
+    --bg-secondary: #ffffff;
+    --bg-card: #ffffff;
+
+    --text-primary: #222831;
+    --text-secondary: #4b5563;
+
+    --accent: #76ABAE;
+    --border-color: #76ABAE;
+
+    --header-bg: #ffffff;
+    --footer-bg: #e2e6e9;
+
+    --input-bg: #ffffff;
+    --input-text: #222831;
+
+    --background-color: var(--bg-primary);
+    --surface-color: var(--bg-secondary);
+    --accent-color: var(--accent);
+    --text-color: var(--text-primary);
+    --secondary-text-color: var(--text-secondary);
+    --card-background: rgba(255, 255, 255, 0.96);
+}
+
+/* =========================================================
+   3. REUSABLE CLASSES
+   ========================================================= */
+
+.section-container {
+    width: min(1100px, 90%);
+    margin: 0 auto;
+}
+
+.section-label,
+.hero-label {
+    margin-bottom: 0.5rem;
+
+    color: var(--accent-color);
+
+    font-size: 0.8rem;
+    font-weight: 700;
+
+    letter-spacing: 0.15rem;
+}
+
+.section-heading {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.section-heading h2,
+.about-container h2 {
+    color: var(--text-color);
+
+    font-size: clamp(1.7rem, 4vw, 2.4rem);
+
+    line-height: 1.2;
+}
+
+.sr-only {
+    position: absolute;
+
+    width: 1px;
+    height: 1px;
+
+    padding: 0;
+    margin: -1px;
+
+    overflow: hidden;
+
+    clip: rect(0, 0, 0, 0);
+
+    white-space: nowrap;
+
+    border: 0;
+}
+
+
+/* =========================================================
+   4. HEADER / NAVBAR
+   ========================================================= */
+
+.site-header {
+    position: sticky;
+    top: 0;
+
+    z-index: 1000;
+
+    background-color: var(--header-bg);
+
+    border-bottom: 1px solid var(--border-color);
+
+    backdrop-filter: blur(10px);
+}
+
+.navbar {
+    width: min(1200px, 92%);
+    min-height: 70px;
+
+    margin: 0 auto;
+
+    display: flex;
+    align-items: center;
+
+    gap: 2rem;
+}
+
+.theme-toggle {
+    width: 42px;
+    height: 42px;
+
+    display: grid;
+    place-items: center;
+
+    flex-shrink: 0;
+
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+
+    background-color: transparent;
+    color: var(--text-primary);
+
+    font-size: 1.15rem;
+
+    cursor: pointer;
+
+    transition:
+        background-color var(--transition-speed),
+        border-color var(--transition-speed),
+        transform var(--transition-speed);
+}
+
+.theme-toggle:hover {
+    background-color: var(--accent-transparent);
+    border-color: var(--accent-color);
+
+    transform: translateY(-2px);
+}
+
+.theme-toggle:focus-visible {
+    outline: 3px solid var(--accent-color);
+    outline-offset: 3px;
+}
+
+.brand {
+    color: var(--text-primary);
+
+    font-size: 1.2rem;
+    font-weight: 700;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+}
+
+.navbar {
+    color: var(--text-primary);
+}
+
+.nav-links {
+    margin-left: auto;
+
+    display: flex;
+    align-items: center;
+
+    gap: 1.7rem;
+}
+
+.nav-links a {
+    position: relative;
+
+    color: var(--text-primary);
+
+    font-size: 0.95rem;
+    font-weight: 500;
+
+    text-decoration: none;
+
+    transition: color var(--transition-speed);
+}
+
+.nav-links a:hover {
+    color: var(--accent-color);
+}
+
+.nav-links a:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 5px;
+}
+
+
+/* =========================================================
+   5. HERO SECTION
+   ========================================================= */
+
+.hero-section {
+    min-height: 75vh;
+
+    padding: 6rem 1rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+}
+
+.hero-content {
+    width: min(750px, 100%);
+}
+
+.hero-content h1 {
+    margin-bottom: 1rem;
+
+    color: var(--text-color);
+
+    font-size: clamp(2.4rem, 7vw, 4.8rem);
+
+    line-height: 1.05;
+
+    letter-spacing: -0.05em;
+}
+
+.hero-description {
+    width: min(580px, 100%);
+
+    margin: 0 auto 2rem;
+
+    color: var(--secondary-text-color);
+
+    font-size: clamp(1rem, 2vw, 1.15rem);
+}
+
+
+/* =========================================================
+   6. SEARCH FORM
+   ========================================================= */
+
+.search-form {
+    width: min(650px, 100%);
+
+    margin: 0 auto;
+
+    padding: 0.4rem;
+
+    display: flex;
+
+    background-color: var(--input-bg);
+
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+
+    box-shadow: var(--shadow);
+}
+
+.search-form:focus-within {
+    border-color: var(--accent-color);
+}
+
+.search-form input {
+    min-width: 0;
+
+    flex: 1;
+
+    padding: 0.9rem 1rem;
+
+    border: none;
+    outline: none;
+
+    background-color: var(--input-bg);
+    color: var(--input-text);
+}
+
+.search-form input::placeholder {
+    color: var(--text-secondary);
+}
+
+.search-button {
+    padding: 0.85rem 1.4rem;
+
+    border: none;
+    border-radius: 10px;
+
+    background-color: var(--accent-color);
+    color: var(--background-color);
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        transform var(--transition-speed),
+        opacity var(--transition-speed);
+}
+
+.search-button:hover {
+    transform: translateY(-1px);
+    opacity: 0.9;
+}
+
+.search-button:focus-visible {
+    outline: 3px solid var(--text-color);
+    outline-offset: 2px;
+}
+
+.status-message {
+    min-height: 1.5rem;
+
+    margin-top: 1rem;
+
+    color: var(--secondary-text-color);
+
+    font-size: 0.9rem;
+}
+
+
+/* =========================================================
+   7. WEATHER SECTION
+   ========================================================= */
+
+.weather-section {
+    padding: 5rem 0;
+}
+
+
+/* =========================================================
+   8. MAIN WEATHER CARD
+   ========================================================= */
+
+.weather-card {
+    padding: clamp(1.5rem, 5vw, 3rem);
+
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+
+    box-shadow: var(--shadow);
+}
+
+.location-information {
+    padding-bottom: 1.5rem;
+
+    border-bottom: 1px solid var(--border-color);
+}
+
+.location-information h3 {
+    color: var(--text-primary);
+
+    font-size: clamp(1.5rem, 4vw, 2rem);
+}
+
+.location-information p {
+    margin-top: 0.25rem;
+
+    color: var(--text-secondary);
+}
+
+.weather-main {
+    padding-top: 2rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: clamp(2rem, 8vw, 6rem);
+}
+
+.weather-icon {
+    font-size: clamp(5rem, 15vw, 8rem);
+
+    line-height: 1;
+}
+
+.temperature-information {
+    text-align: left;
+}
+
+.temperature {
+    color: var(--text-primary);
+
+    font-size: clamp(4rem, 12vw, 7rem);
+    font-weight: 700;
+
+    line-height: 1;
+}
+
+.weather-condition {
+    margin-top: 0.75rem;
+
+    color: var(--accent);
+
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.weather-description,
+.feels-like {
+    margin-top: 0.3rem;
+
+    color: var(--text-secondary);
+}
+
+.feels-like span {
+    color: var(--text-primary);
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   9. WEATHER DETAIL GRID
+   ========================================================= */
+
+.weather-details-grid {
+    margin-top: 1.5rem;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 1rem;
+}
+
+.detail-card {
+    min-height: 120px;
+
+    padding: 1.25rem;
+
+    display: flex;
+    align-items: center;
+
+    gap: 1rem;
+
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+
+    transition:
+        transform var(--transition-speed),
+        border-color var(--transition-speed);
+}
+
+.detail-card:hover {
+    transform: translateY(-3px);
+
+    border-color: rgba(118, 171, 174, 0.55);
+}
+
+.detail-icon {
+    font-size: 1.6rem;
+}
+
+.detail-label {
+    color: var(--text-secondary);
+
+    font-size: 0.85rem;
+}
+
+.detail-value {
+    margin-top: 0.2rem;
+
+    color: var(--text-primary);
+
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.placeholder-note {
+    margin-top: 1rem;
+
+    color: var(--secondary-text-color);
+
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+
+/* =========================================================
+   10. ABOUT SECTION
+   ========================================================= */
+
+.about-section {
+    padding: 6rem 0;
+
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.about-container {
+    max-width: 750px;
+
+    text-align: center;
+}
+
+.about-container h2 {
+    margin-bottom: 1.5rem;
+}
+
+.about-container > p:not(.section-label) {
+    margin-top: 1rem;
+
+    color: var(--text-secondary);
+}
+
+
+/* =========================================================
+   11. FOOTER
+   ========================================================= */
+
+.site-footer {
+    padding: 3rem 0 2rem;
+
+    border-top: 1px solid var(--border-color);
+
+    background-color: var(--footer-bg);
+    color: var(--text-primary);
+}
+
+.footer-container {
+    width: min(1100px, 90%);
+
+    margin: 0 auto;
+}
+
+.footer-brand {
+    text-align: center;
+}
+
+.brand-name {
+    color: var(--text-primary);
+
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.footer-brand > p:last-child {
+    margin-top: 0.4rem;
+
+    color: var(--text-secondary);
+}
+
+.footer-links {
+    margin: 1.5rem 0;
+
+    display: flex;
+    justify-content: center;
+
+    gap: 1.5rem;
+}
+
+.footer-links a {
+    color: var(--text-primary);
+
+    text-decoration: none;
+
+    transition: color var(--transition-speed);
+}
+
+.footer-links a:hover {
+    color: var(--accent-color);
+}
+
+.footer-links a:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 4px;
+}
+
+.footer-bottom {
+    padding-top: 1.5rem;
+
+    display: flex;
+    justify-content: space-between;
+
+    gap: 1rem;
+
+    border-top: 1px solid var(--border-color);
+
+    color: var(--secondary-text-color);
+
+    font-size: 0.8rem;
+}
+
+
+/* =========================================================
+   12. TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .weather-details-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+/* =========================================================
+   13. MOBILE
+   ========================================================= */
+
+@media (max-width: 650px) {
+
+    .navbar {
+        min-height: 64px;
+
+        gap: 0.75rem;
+    }
+
+    .brand {
+        font-size: 1rem;
+    }
+
+    .nav-links {
+        gap: 0.8rem;
+    }
+
+    .nav-links a {
+        font-size: 0.8rem;
+    }
+
+
+    /* HERO */
+
+    .hero-section {
+        min-height: 70vh;
+
+        padding: 4rem 1rem;
+    }
+
+    .hero-content h1 {
+        letter-spacing: -0.035em;
+    }
+
+
+    /* SEARCH */
+
+    .search-form {
+        flex-direction: column;
+
+        padding: 0.5rem;
+    }
+
+    .search-form input {
+        width: 100%;
+    }
+
+    .search-button {
+        width: 100%;
+    }
+
+
+    /* WEATHER */
+
+    .weather-main {
+        flex-direction: column;
+
+        gap: 1.5rem;
+    }
+
+    .temperature-information {
+        text-align: center;
+    }
+
+    .weather-details-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+
+    /* FOOTER */
+
+    .footer-bottom {
+        flex-direction: column;
+
+        text-align: center;
+    }
+
+}
+
+
+/* =========================================================
+   14. SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    .navbar {
+        width: 94%;
+    }
+
+    .theme-toggle {
+        width: 38px;
+        height: 38px;
+    }
+
+    .nav-links {
+        display: none;
+    }
+
+    .weather-details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .detail-card {
+        min-height: 100px;
+    }
+
+}

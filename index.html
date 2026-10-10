@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="description"
+        content="A responsive weather web application for checking current weather conditions."
+    >
+
+    <title>Weather WebApp</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- ==================== HEADER / NAVBAR ==================== -->
+    <header class="site-header">
+        <nav class="navbar">
+
+            <button
+                id="theme-toggle"
+                class="theme-toggle"
+                type="button"
+                aria-label="Toggle light and dark mode"
+            >
+                ☀️
+            </button>
+
+            <a href="#home" class="brand">
+                Weather WebApp
+            </a>
+
+            <div class="nav-links">
+                <a href="#home">Home</a>
+                <a href="#weather">Weather</a>
+                <a href="#about">About</a>
+            </div>
+
+        </nav>
+    </header>
+
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <main>
+
+        <!-- ==================== HERO ==================== -->
+        <section id="home" class="hero-section">
+
+            <div class="hero-content">
+
+                <p class="hero-label">LIVE WEATHER</p>
+
+                <h1>Weather, Wherever You Are</h1>
+
+                <p class="hero-description">
+                    Search any city or location to view its current
+                    weather conditions.
+                </p>
+
+
+                <!-- Search Form -->
+                <form id="weather-form" class="search-form">
+
+                    <label for="location-input" class="sr-only">
+                        Search city or location
+                    </label>
+
+                    <input
+                        type="text"
+                        id="location-input"
+                        name="location"
+                        placeholder="Search city or location..."
+                        autocomplete="off"
+                    >
+
+                    <button type="submit" class="search-button">
+                        Search
+                    </button>
+
+                </form>
+
+
+                <!-- Message area for loading/errors later -->
+                <p
+                    id="status-message"
+                    class="status-message"
+                    aria-live="polite"
+                ></p>
+
+            </div>
+
+        </section>
+
+
+        <!-- ==================== WEATHER ==================== -->
+        <section id="weather" class="weather-section">
+
+            <div class="section-container">
+
+                <div class="section-heading">
+                    <p class="section-label">CURRENT CONDITIONS</p>
+                    <h2>Current Weather</h2>
+                </div>
+
+
+                <!-- Main Weather Card -->
+                <article class="weather-card">
+
+                    <div class="location-information">
+                        <h3 id="location-name">
+                            Bhubaneswar
+                        </h3>
+
+                        <p id="location-details">
+                            Odisha, India
+                        </p>
+                    </div>
+
+
+                    <div class="weather-main">
+
+                        <div
+                            id="weather-icon"
+                            class="weather-icon"
+                            aria-hidden="true"
+                        >
+                            ☁️
+                        </div>
+
+                        <div class="temperature-information">
+
+                            <p id="temperature" class="temperature">
+                                29°C
+                            </p>
+
+                            <p id="weather-condition" class="weather-condition">
+                                Partly Cloudy
+                            </p>
+
+                            <p id="weather-description" class="weather-description">
+                                Partly cloudy conditions
+                            </p>
+
+                            <p class="feels-like">
+                                Feels like
+                                <span id="feels-like-temperature">32°C</span>
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <!-- Weather Details -->
+                <div class="weather-details-grid">
+
+                    <article class="detail-card">
+                        <span class="detail-icon" aria-hidden="true">💧</span>
+
+                        <div>
+                            <p class="detail-label">Humidity</p>
+                            <p id="humidity" class="detail-value">78%</p>
+                        </div>
+                    </article>
+
+
+                    <article class="detail-card">
+                        <span class="detail-icon" aria-hidden="true">🌬️</span>
+
+                        <div>
+                            <p class="detail-label">Wind Speed</p>
+                            <p id="wind-speed" class="detail-value">12 km/h</p>
+                        </div>
+                    </article>
+
+
+                    <article class="detail-card">
+                        <span class="detail-icon" aria-hidden="true">🧭</span>
+
+                        <div>
+                            <p class="detail-label">Wind Direction</p>
+                            <p id="wind-direction" class="detail-value">NE</p>
+                        </div>
+                    </article>
+
+
+                    <article class="detail-card">
+                        <span class="detail-icon" aria-hidden="true">🌡️</span>
+
+                        <div>
+                            <p class="detail-label">Pressure</p>
+                            <p id="pressure" class="detail-value">1008 hPa</p>
+                        </div>
+                    </article>
+
+
+                    <article class="detail-card">
+                        <span class="detail-icon" aria-hidden="true">👁️</span>
+
+                        <div>
+                            <p class="detail-label">Visibility</p>
+                            <p id="visibility" class="detail-value">10 km</p>
+                        </div>
+                    </article>
+
+
+                    <article class="detail-card">
+                        <span class="detail-icon" aria-hidden="true">☁️</span>
+
+                        <div>
+                            <p class="detail-label">Cloud Cover</p>
+                            <p id="cloud-cover" class="detail-value">45%</p>
+                        </div>
+                    </article>
+
+
+                    <article class="detail-card">
+                        <span class="detail-icon" aria-hidden="true">🌅</span>
+
+                        <div>
+                            <p class="detail-label">Sunrise</p>
+                            <p id="sunrise" class="detail-value">5:42 AM</p>
+                        </div>
+                    </article>
+
+
+                    <article class="detail-card">
+                        <span class="detail-icon" aria-hidden="true">🌇</span>
+
+                        <div>
+                            <p class="detail-label">Sunset</p>
+                            <p id="sunset" class="detail-value">5:31 PM</p>
+                        </div>
+                    </article>
+
+                </div>
+
+                <p class="placeholder-note">
+                    Weather values currently shown are temporary placeholders
+                    for interface design. They will later be replaced with
+                    real API data.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- ==================== ABOUT ==================== -->
+        <section id="about" class="about-section">
+
+            <div class="section-container about-container">
+
+                <p class="section-label">ABOUT</p>
+
+                <h2>A Simple Way to Check the Weather</h2>
+
+                <p>
+                    Weather WebApp is a responsive web application designed
+                    to display current weather information for locations
+                    around the world using live weather data.
+                </p>
+
+                <p>
+                    This project is built using HTML, CSS and Vanilla
+                    JavaScript.
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="site-footer">
+
+        <div class="footer-container">
+
+            <div class="footer-brand">
+                <p class="brand-name">Weather WebApp</p>
+
+                <p>
+                    Current weather information in a clean and simple interface.
+                </p>
+            </div>
+
+
+            <div class="footer-links">
+                <a href="#home">Home</a>
+                <a href="#weather">Weather</a>
+                <a href="#about">About</a>
+            </div>
+
+
+            <div class="footer-bottom">
+                <p>
+                    Weather data attribution will be added when the API is connected.
+                </p>
+
+                <p>
+                    Built by Simran Sajid • © 2026
+                </p>
+            </div>
+
+        </div>
+
+    </footer>
+
+
+    <script src="js/script.js"></script>
+
+</body>
+
+</html>
