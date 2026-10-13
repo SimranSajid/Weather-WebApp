@@ -38,6 +38,7 @@ The page initially shows sample weather values. Submit a city search to replace 
 
 1. **[Open-Meteo Geocoding API](https://open-meteo.com/en/docs/geocoding-api)** provides the fallback for manually submitted global searches without a selected local city record.
 2. **[Open-Meteo Weather / Forecast API](https://open-meteo.com/en/docs)** retrieves current weather for those coordinates and daily sunrise/sunset data.
+3. **[Photon reverse geocoding](https://github.com/komoot/photon)** resolves browser geolocation coordinates into place names using OpenStreetMap data. Open-Meteo forecasts contain no city/region/country fields. The lookup uses `features[].properties.city` (or `name` for a city/town/village/locality), `state`, and `country`; failure displays the actual coordinates while retaining useful weather. No city is inferred from the weather timezone. Manual geocoding uses Open-Meteo `name`, `admin1`, and `country`; autocomplete uses the local database. All paths share one formatter that removes empty and duplicate parts.
 
 This project makes requests directly from the browser and does not require an API key in its current configuration.
 
@@ -50,6 +51,8 @@ This project makes requests directly from the browser and does not require an AP
 5. JavaScript maps weather codes to conditions and icons, formats the returned values, and updates the page.
 6. The loading message clears on success; unsuccessful searches show a status message.
 7. Independently, switching themes saves the selected preference in localStorage.
+
+Current Weather icons share the video system's numeric category mapping and use the same weather response's `current.is_day`. Clear day/night uses ☀️/🌙, partly cloudy day/night uses 🌤️/☁️, overcast uses ☁️, rain/heavy rain uses 🌧️, thunderstorm uses ⛈️, snow uses ❄️, fog uses 🌫️, and unknown codes use 🌡️. Neither temperature, theme, nor the browser clock chooses an icon. Run `node tests/weather-location-icon-check.cjs` for focused geolocation/name formatting and icon/video consistency checks.
 
 ## Project Structure
 

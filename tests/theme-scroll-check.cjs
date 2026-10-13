@@ -10,6 +10,7 @@ const weather = { current: { temperature_2m: 24, relative_humidity_2m: 70, appar
         const errors = [];
         page.on('pageerror', error => errors.push(error.message));
         let failWeather = false;
+        await page.route('https://photon.komoot.io/reverse**', route => route.fulfill({ json: { features: [{ properties: { city: 'Delhi', state: 'Delhi', country: 'India' } }] } }));
         await page.route('https://geocoding-api.open-meteo.com/**', route => {
             const name = new URL(route.request().url()).searchParams.get('name');
             return route.fulfill({ json: { results: name === 'invalidxyz123' ? [] : [{ name, latitude: 28.6, longitude: 77.2, country: 'Test country' }] } });
@@ -67,7 +68,10 @@ const weather = { current: { temperature_2m: 24, relative_humidity_2m: 70, appar
         }
         for (const width of [320, 375, 390, 430, 768, 1024, 1280, 1440]) {
             await page.setViewportSize({ width, height: 900 });
-            await page.waitForTimeout(300);
+            await page.waitForFunction(() => {
+                const links = document.querySelector('.nav-links');
+                return innerWidth > 480 || getComputedStyle(links).visibility === 'hidden';
+            });
             const boxes = await page.evaluate(() => [...document.querySelectorAll('.brand, #theme-toggle, #menu-toggle, .nav-links')].filter(el => getComputedStyle(el).display !== 'none' && getComputedStyle(el).visibility !== 'hidden').map(el => ({ id: el.className, x: el.getBoundingClientRect().x, right: el.getBoundingClientRect().right })));
             boxes.sort((a,b) => a.x-b.x);
             for (let i=1;i<boxes.length;i++) assert.ok(boxes[i].x >= boxes[i-1].right, JSON.stringify(boxes));

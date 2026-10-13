@@ -55,6 +55,7 @@ const weather = { current: { temperature_2m: 25, apparent_temperature: 26, weath
     page.on('request', request => requests.push(request.url()));
     const live = process.argv.includes('--live');
     if (!live) {
+        await page.route('https://photon.komoot.io/reverse**', route => route.fulfill({ json: { features: [{ properties: { city: 'Tokyo', state: 'Tokyo', country: 'Japan' } }] } }));
         await page.route('https://api.open-meteo.com/**', route => route.fulfill({ json: weather }));
         await page.route('https://geocoding-api.open-meteo.com/**', route => {
             const name = new URL(route.request().url()).searchParams.get('name');
@@ -156,7 +157,11 @@ const weather = { current: { temperature_2m: 25, apparent_temperature: 26, weath
         }
         console.log(`PASS ${width}px both themes, alignment, no overflow, menu/touch interaction`);
     }
-    await input.press('Escape'); await page.locator('#use-location-button').evaluate(e => e.scrollIntoView({ block: 'center', behavior: 'instant' })); await page.click('#use-location-button'); await page.waitForFunction(() => document.querySelector('#location-name').textContent === 'Current Location' && document.querySelector('#status-message').textContent === '');
+    await input.press('Escape'); await page.locator('#use-location-button').evaluate(e => e.scrollIntoView({ block: 'center', behavior: 'instant' })); await page.click('#use-location-button'); await page.waitForFunction(() => document.querySelector('#status-message').textContent === '' && document.querySelector('#location-name').textContent.trim() !== 'Current Location');
+    if (!live) {
+        assert.equal(await page.locator('#location-name').textContent(), 'Tokyo');
+        assert.equal(await page.locator('#location-details').textContent(), 'Japan');
+    }
     await page.click('#theme-toggle'); const light = await page.evaluate(() => document.body.classList.contains('light-theme')); await page.click('#theme-toggle'); assert.equal(await page.evaluate(() => document.body.classList.contains('light-theme')), !light); await page.reload(); assert.equal(await page.evaluate(() => document.body.classList.contains('light-theme')), !light);
     assert.deepEqual(errors, []); assert.deepEqual(consoleErrors, []);
     console.log('PASS keyboard, manual search, native geolocation simulated coordinates, animations, one-click themes/persistence; no console errors');

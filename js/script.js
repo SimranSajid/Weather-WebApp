@@ -30,99 +30,106 @@ const navbar = document.querySelector(".navbar");
 // ==================== HELPER / FORMATTING FUNCTIONS ====================
 //weather code --> icon + description + condition
 
+function getWeatherIcon(code, isDay) {
+    const category = WeatherBackground.getWeatherCategory(code);
+    if (category === "clear") return isDay === 0 ? "🌙" : isDay === 1 ? "☀️" : "🌡️";
+    if (category === "partly cloudy") return isDay === 1 ? "🌤️" : "☁️";
+    return { cloudy: "☁️", rain: "🌧️", "heavy rain": "🌧️", thunderstorm: "⛈️", snow: "❄️", fog: "🌫️" }[category] || "🌡️";
+}
+
+function formatLocation(location) {
+    const seen = new Set();
+    const parts = [location.city, location.state, location.country].filter(value => {
+        if (typeof value !== "string" || !value.trim()) return false;
+        const key = normalizeLocationName(value.replace(/\s+/g, " "));
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+    }).map(value => value.trim().replace(/\s+/g, " "));
+    return { name: parts[0] || "Location unavailable", details: parts.slice(1).join(", ") };
+}
+
 function getWeatherInfo(code) {
     if (code === 0) {
         return {
             condition: "Clear Sky",
-            description: "Clear weather conditions",
-            icon: "☀️"
+            description: "Clear weather conditions"
         };
     }
 
     if (code === 1) {
         return {
             condition: "Mainly Clear",
-            description: "Mainly clear weather conditions",
-            icon: "🌤️"
+            description: "Mainly clear weather conditions"
         };
     }
 
     if (code === 2) {
         return {
             condition: "Partly Cloudy",
-            description: "Partly cloudy conditions",
-            icon: "🌤️"
+            description: "Partly cloudy conditions"
         };
     }
 
     if (code === 3) {
         return {
             condition: "Overcast",
-            description: "Cloudy conditions",
-            icon: "☁️"
+            description: "Cloudy conditions"
         };
     }
 
     if (code === 45 || code === 48) {
         return {
             condition: "Fog",
-            description: "Foggy conditions",
-            icon: "🌫️"
+            description: "Foggy conditions"
         };
     }
 
-    if (code === 51 || code === 53 || code === 55) {
+    if ([51, 53, 55, 56, 57].includes(code)) {
         return {
             condition: "Drizzle",
-            description: "Drizzle conditions",
-            icon: "🌦️"
+            description: "Drizzle conditions"
         };
     }
 
-    if (code === 61 || code === 63 || code === 65) {
+    if ([61, 63, 65, 66, 67].includes(code)) {
         return {
             condition: "Rain",
-            description: "Rainy conditions",
-            icon: "🌧️"
+            description: "Rainy conditions"
         };
     }
 
     if (code === 71 || code === 73 || code === 75 || code === 77) {
         return {
             condition: "Snow",
-            description: "Snowy conditions",
-            icon: "❄️"
+            description: "Snowy conditions"
         };
     }
 
     if (code === 80 || code === 81 || code === 82) {
         return {
             condition: "Rain Showers",
-            description: "Rain shower conditions",
-            icon: "🌦️"
+            description: "Rain shower conditions"
         };
     }
 
     if (code === 85 || code === 86) {
         return {
             condition: "Snow Showers",
-            description: "Snow shower conditions",
-            icon: "🌨️"
+            description: "Snow shower conditions"
         };
     }
 
-    if (code === 95 || code === 96 || code === 99) {
+    if ([95, 96, 97, 99].includes(code)) {
         return {
             condition: "Thunderstorm",
-            description: "Thunderstorm conditions",
-            icon: "⛈️"
+            description: "Thunderstorm conditions"
         };
     }
 
     return {
         condition: "Unknown",
-        description: "Weather information unavailable",
-        icon: "🌡️"
+        description: "Weather information unavailable"
     };
 }
 
@@ -172,7 +179,7 @@ function updateWeatherUI(location, weatherData) {
     const weatherInfo =
         getWeatherInfo(current.weather_code);
 
-    weatherIcon.textContent = weatherInfo.icon;
+    weatherIcon.textContent = getWeatherIcon(current.weather_code, current.is_day);
 
     weatherCondition.textContent =
         weatherInfo.condition;
@@ -181,13 +188,9 @@ function updateWeatherUI(location, weatherData) {
         weatherInfo.description;
 
 //------------------------------------------------------------
-    locationName.textContent = location.city; //instaed of deafult bbsr - returns user entered city name 
-
-    locationDetails.textContent =
-    `${location.state || ""}${location.state ? ", " : ""}${location.country}`; //o/p -> Odisha, India
-    if (location.details) {
-        locationDetails.textContent = location.details;
-    }
+    const formattedLocation = formatLocation(location);
+    locationName.textContent = formattedLocation.name;
+    locationDetails.textContent = formattedLocation.details;
 
     temperature.textContent =
     `${current.temperature_2m}°C`;  //29 (for ui) with real api data
@@ -280,7 +283,7 @@ async function getCoordinates(city) {
 
     const cityName = place.name;
     const stateName = place.admin1;
-    const countryName = place.country || "Unknown country";
+    const countryName = place.country || "";
 
 
     return {
@@ -290,6 +293,35 @@ async function getCoordinates(city) {
         state: stateName,
         country: countryName
     };
+}
+
+async function getLocationFromCoordinates(latitude, longitude) {
+    // Open-Meteo forecasts do not contain place names; reverse-geocode the same
+    // browser coordinates, never the timezone name or a different city's weather.
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+    try {
+        const response = await fetch(
+            `https://photon.komoot.io/reverse?lat=${latitude}&lon=${longitude}&limit=3&lang=en`,
+            { signal: controller.signal }
+        );
+        if (!response.ok) throw new Error("Location name lookup failed.");
+        const data = await response.json();
+        const places = (data.features || []).map(feature => feature.properties || {});
+        const place = places.find(place => place.city) || places.find(place =>
+            ["city", "town", "village", "hamlet", "locality"].includes(place.osm_value)
+        ) || places[0];
+        if (!place) throw new Error("No location name found.");
+        const city = place.city || (["city", "town", "village", "hamlet", "locality"].includes(place.osm_value) ? place.name : "");
+        if (!city && !place.state && !place.country) throw new Error("No location name found.");
+        return { city, state: place.state || "", country: place.country || "" };
+    } catch (error) {
+        console.warn("Unable to resolve location name:", error.message);
+        // Keep useful weather available without inventing a city when lookup fails.
+        return { city: `${latitude.toFixed(4)}°, ${longitude.toFixed(4)}°`, state: "", country: "" };
+    } finally {
+        clearTimeout(timeout);
+    }
 }
 
 async function getWeather(latitude, longitude) {
@@ -671,18 +703,15 @@ locationButton.addEventListener("click", function () {
                 const longitude = position.coords.longitude;
 
                 try {
-                    const weatherData = await getWeather(latitude, longitude);
+                    const [weatherData, resolvedLocation] = await Promise.all([
+                        getWeather(latitude, longitude),
+                        getLocationFromCoordinates(latitude, longitude)
+                    ]);
                     if (searchId !== latestSearchId) {
                         return;
                     }
 
-                    updateWeatherUI({
-                        city: "Current Location",
-                        country: "",
-                        details: weatherData.timezone
-                            ? `Time zone: ${weatherData.timezone.replace(/_/g, " ")}`
-                            : "Browser-provided location"
-                    }, weatherData);
+                    updateWeatherUI(resolvedLocation, weatherData);
                 } catch (error) {
                     if (searchId !== latestSearchId) {
                         return;

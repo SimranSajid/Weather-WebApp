@@ -233,6 +233,8 @@ const weather = { current: { temperature_2m: 24, apparent_temperature: 26, weath
                 assert.equal(await target.locator('video[src]').count(), 0);
                 assert.equal(await target.locator('body').evaluate(el => getComputedStyle(el).backgroundColor), 'rgb(34, 40, 49)');
             } else await settle(63, 0, target, true);
+            // A default clip may already be visible before the failing request ends.
+            for (let attempt = 0; attempt < 50 && warnings.length === 0; attempt++) await target.waitForTimeout(100);
             assert.ok(warnings.length > 0);
             await target.close();
         }

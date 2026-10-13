@@ -109,7 +109,7 @@ a {
     --accent: #76ABAE;
     --border-color: #76ABAE;
 
-    --header-bg: #222831;
+    --header-bg: rgba(34, 40, 49, 0.25);
     --footer-bg: #1b222b;
 
     --input-bg: #31363F;
@@ -138,7 +138,7 @@ body.light-theme {
     --accent: #76ABAE;
     --border-color: #76ABAE;
 
-    --header-bg: #ffffff;
+    --header-bg: rgba(255, 255, 255, 0.20);
     --footer-bg: #e2e6e9;
 
     --input-bg: #ffffff;
@@ -222,6 +222,7 @@ body.light-theme {
     border-bottom: 1px solid var(--border-color);
 
     backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 .navbar {
@@ -1044,10 +1045,6 @@ body.light-theme .footer-links a:hover {
    ========================================================= */
 
 @media (max-width: 480px) {
-
-    .site-header {
-        backdrop-filter: none;
-    }
 
     body.menu-open {
         overflow: hidden;
