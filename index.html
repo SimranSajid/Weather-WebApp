@@ -17,6 +17,12 @@
 
 <body>
 
+    <div class="weather-background" aria-hidden="true">
+        <video class="weather-background__video" autoplay muted loop playsinline preload="none" tabindex="-1"></video>
+        <video class="weather-background__video" autoplay muted loop playsinline preload="none" tabindex="-1"></video>
+        <div class="weather-background__overlay"></div>
+    </div>
+
     <!-- ==================== HEADER / NAVBAR ==================== -->
     <header class="site-header">
         <nav class="navbar">
@@ -356,6 +362,7 @@
 
 
     <script src="js/location-search.js"></script>
+    <script src="js/weather-background.js"></script>
     <script src="js/script.js"></script>
 
 </body>

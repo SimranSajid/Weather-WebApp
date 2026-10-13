@@ -229,6 +229,7 @@ function updateWeatherUI(location, weatherData) {
     statusMessage.textContent = "";
     animateWeatherUpdate();
     scrollToCurrentWeather();
+    WeatherBackground.update(weatherData.current);
 }
 
 // ==================== API FUNCTIONS ====================
@@ -295,7 +296,7 @@ async function getWeather(latitude, longitude) {
     //1. Create the Weather API URL here
     const weatherURL =
         `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}` +
-        `&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,cloud_cover,surface_pressure,visibility,wind_speed_10m,wind_direction_10m` +
+        `&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,is_day,cloud_cover,surface_pressure,visibility,wind_speed_10m,wind_direction_10m` +
         `&daily=sunrise,sunset` +
         `&timezone=auto`;
 //the 2m indicates values referenced at approximately 2 metres above ground.
@@ -729,6 +730,7 @@ function syncThemeToggle() {
     const isLightTheme = document.body.classList.contains("light-theme");
     themeToggle.setAttribute("aria-label", isLightTheme ? "Switch to dark mode" : "Switch to light mode");
     themeToggle.setAttribute("aria-pressed", String(isLightTheme));
+    WeatherBackground.syncDefault();
 }
 
 // ==================== THEME TOGGLE ====================

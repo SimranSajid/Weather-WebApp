@@ -14,6 +14,7 @@ html {
 
 body {
     min-height: 100vh;
+    isolation: isolate;
 
     background-color: var(--bg-primary);
     color: var(--text-primary);
@@ -24,6 +25,54 @@ body {
     transition:
         background-color 0.3s ease,
         color 0.3s ease;
+}
+
+/* Decorative fixed layers stay below content and never receive input. */
+.weather-background {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.weather-background__video,
+.weather-background__overlay {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.weather-background__video {
+    position: fixed;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+
+.weather-background__video.is-visible {
+    opacity: 1;
+}
+
+.weather-background__overlay {
+    z-index: 2;
+    background-color: rgba(34, 40, 49, 0.20);
+    opacity: 0;
+    transition: background-color 400ms ease, opacity 400ms ease;
+}
+
+.weather-background.has-video .weather-background__overlay {
+    opacity: 1;
+}
+
+body.light-theme .weather-background__overlay {
+    background-color: rgba(238, 238, 238, 0.10);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .weather-background { display: none; }
 }
 
 body .weather-card,
@@ -72,6 +121,7 @@ a {
     --text-color: var(--text-primary);
     --secondary-text-color: var(--text-secondary);
     --card-background: rgba(49, 54, 63, 0.72);
+    --content-scrim: rgba(34, 40, 49, 0.72);
     --accent-transparent: rgba(118, 171, 174, 0.15);
     --shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
     --transition-speed: 0.25s;
@@ -99,7 +149,8 @@ body.light-theme {
     --accent-color: var(--accent);
     --text-color: var(--text-primary);
     --secondary-text-color: var(--text-secondary);
-    --card-background: rgba(255, 255, 255, 0.96);
+    --card-background: rgba(255, 255, 255, 0.82);
+    --content-scrim: rgba(238, 238, 238, 0.82);
 }
 
 /* =========================================================
@@ -363,6 +414,28 @@ body.light-theme .theme-toggle__thumb {
 
 .hero-content {
     width: min(750px, 100%);
+    position: relative;
+    isolation: isolate;
+}
+
+/* Local text backing protects readability without washing out the viewport. */
+.hero-content::before,
+.section-heading::before,
+.about-container::before {
+    content: "";
+    position: absolute;
+    inset: -0.75rem;
+    z-index: -1;
+    border-radius: 16px;
+    background-color: var(--content-scrim);
+    backdrop-filter: blur(8px);
+    pointer-events: none;
+}
+
+.section-heading,
+.about-container {
+    position: relative;
+    isolation: isolate;
 }
 
 .hero-content h1 {
@@ -600,7 +673,8 @@ body.light-theme .theme-toggle__thumb {
 .weather-card {
     padding: clamp(1.5rem, 5vw, 3rem);
 
-    background-color: var(--bg-card);
+    background-color: var(--card-background);
+    backdrop-filter: blur(10px);
     color: var(--text-primary);
 
     border: 1px solid var(--border-color);
@@ -704,7 +778,8 @@ body.light-theme .theme-toggle__thumb {
 
     gap: 1rem;
 
-    background-color: var(--bg-card);
+    background-color: var(--card-background);
+    backdrop-filter: blur(10px);
     color: var(--text-primary);
 
     border: 1px solid var(--border-color);
@@ -757,7 +832,7 @@ body.light-theme .theme-toggle__thumb {
 .about-section {
     padding: 6rem 0;
 
-    background-color: var(--bg-secondary);
+    background-color: transparent;
     color: var(--text-primary);
 }
 

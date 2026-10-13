@@ -25,6 +25,7 @@ The page initially shows sample weather values. Submit a city search to replace 
 - Responsive layouts for desktop, tablet, and mobile.
 - Dark and light modes with immediate, single-click switching and smooth visual transitions.
 - Theme preference saved using browser localStorage and restored after refresh.
+- Local day/night weather videos, preloaded and blended independently of weather rendering, with theme overlays and static reduced-motion support.
 
 ## Tech Stack
 
@@ -55,13 +56,13 @@ This project makes requests directly from the browser and does not require an AP
 ```text
 Weather-WebApp/
 ├── assets/
-│   ├── icons
-│   └── images
+│   └── Videos/
 ├── css/
 │   └── style.css
 ├── js/
 │   ├── location-search.js
 │   ├── location-search-worker.js
+│   ├── weather-background.js
 │   └── script.js
 ├── data/locations/
 │   ├── index.json
@@ -75,9 +76,41 @@ Weather-WebApp/
 └── README.md
 ```
 
-`assets/icons` and `assets/images` are currently empty placeholder files. Weather icons are emoji rendered by JavaScript.
+Weather icons are emoji rendered by JavaScript; the theme toggle uses inline SVGs.
+
+## Dynamic Weather Background
+
+`js/weather-background.js` owns the video mapping, loading, playback, and transition lifecycle. The existing successful weather render calls `WeatherBackground.update(current)` without awaiting media loading. Open-Meteo's `current.weather_code` selects the category; the newly requested `current.is_day` selects the searched location's day/night clip. After a successful result, theme changes only update a CSS overlay and never reload media or weather.
+
+Mapping follows the [Open-Meteo WMO code documentation](https://open-meteo.com/en/docs): clear 0/1, partly cloudy 2, cloudy 3, fog 45/48, rain 51/53/55/56/57/61/63/66/80/81, heavy rain 65/67/82, snow 71/73/75/77/85/86, thunderstorm 95/96/97/99, and default for other codes. Freezing precipitation uses the matching rain intensity category. Missing `is_day` preserves the current background rather than guessing from the computer clock.
+
+All paths below are relative to `assets/Videos/`; spaces and filename case are intentional.
+
+| Category | Day file | Night file |
+| --- | --- | --- |
+| clear | `clear/clear day sky.mp4` | `clear/clear night sky.mp4` |
+| partly cloudy | `partly cloudy/partly cloudy sky.mp4` | `partly cloudy/partly cloudy night.mp4` |
+| cloudy | `cloudy/cloudy day sky (1).mp4` | `cloudy/cloudy day sky (2).mp4` |
+| rain | `rain/rainy at day.mp4` | `rain/rain at night.mp4` |
+| heavy rain | `heavy rain/heavy rain day.mp4` | `heavy rain/heavy rain night.mp4` |
+| thunderstorm | `thunderstorm/thunderstorm day.mp4` | `thunderstorm/thunderstorm night.mp4` |
+| snow | `snow/snowfall daytime.mp4` | `snow/snowfall night.mp4` |
+| fog | `fog/foggy day.mp4` | `fog/foggy night.mp4` |
+| default | `default/default day.mp4` | `default/default night.mp4` |
+
+The cloudy `(2)` clip shows moonlit clouds despite its daytime filename; it is intentionally used for night. No assets are renamed or replaced.
+
+Two muted, looping, inline videos cover the viewport behind all content. The next clip waits for decoded data and successful playback before a one-second blend. Keeping the previous clip opaque underneath prevents a flash of the static background. The outgoing clip is then paused and unloaded. Only current/next clips load, and superseded media requests are cancelled. Weather updates retain the existing search request guard and the background uses a separate version guard to prevent stale video loads.
+
+Loading/decoding/playback failure tries the matching default day/night video, then clears both video elements to reveal the existing theme background color. Failures log development warnings without affecting weather errors. Before a successful weather result, the saved/current light theme selects default day and dark selects default night; toggling themes crossfades these defaults using the same media lifecycle. After a successful result, only API weather/daylight selects the video and theme changes affect only the overlay. This state resets on refresh because weather results are not persisted. Reduced-motion mode cancels media loading and playback; disabling it restores the last successful weather video or the current theme's default. Hidden tabs pause playback.
+
+Dark overlay: `rgba(34, 40, 49, 0.20)`; light overlay: `rgba(238, 238, 238, 0.10)`. Overlay changes take 400ms, using the existing palette. Hero/section text uses local translucent backings for contrast; weather cards use controlled transparency and backdrop blur. About's page-level background is transparent. Navbar, search controls, and footer retain their readable surfaces. Active videos remain at full opacity, with no brightness or blur filter on the media.
+
+Run `node tests/video-background-check.cjs` with the same Playwright/Chrome prerequisites as the other browser tests. It serves local files with byte-range support, verifies all 18 real clips and exact path case, and exercises category mapping, themes, crossfades, media failures, races, reduced motion, and responsive layouts. Weather responses and failure cases are controlled fixtures; media playback uses the actual assets. The existing `node tests/location-search-check.cjs --live` also checks real Open-Meteo requests.
 
 ## Getting Started
+
+The original MP4 assets are tracked with Git LFS, including a default-day clip larger than GitHub's normal file limit. Install Git LFS before cloning, then run `git lfs pull` inside the checkout to retrieve the actual videos if needed. GitHub Pages does not serve Git LFS files directly; future deployment must use a build/host that retrieves LFS media or publish the media separately. See [GitHub's Git LFS documentation](https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-git-large-file-storage).
 
 1. Clone the repository:
 
