@@ -228,6 +228,7 @@ function updateWeatherUI(location, weatherData) {
     // Remove loading message after success
     statusMessage.textContent = "";
     animateWeatherUpdate();
+    scrollToCurrentWeather();
 }
 
 // ==================== API FUNCTIONS ====================
@@ -722,7 +723,13 @@ try {
 }
 
 document.body.classList.toggle("light-theme", savedTheme === "light");
-themeToggle.textContent = savedTheme === "light" ? "🌙" : "☀️";
+syncThemeToggle();
+
+function syncThemeToggle() {
+    const isLightTheme = document.body.classList.contains("light-theme");
+    themeToggle.setAttribute("aria-label", isLightTheme ? "Switch to dark mode" : "Switch to light mode");
+    themeToggle.setAttribute("aria-pressed", String(isLightTheme));
+}
 
 // ==================== THEME TOGGLE ====================
 themeToggle.addEventListener("click", function () {
@@ -731,7 +738,7 @@ themeToggle.addEventListener("click", function () {
     const isLightTheme =
         document.body.classList.contains("light-theme");
 
-    themeToggle.textContent = isLightTheme ? "🌙" : "☀️";
+    syncThemeToggle();
 
     try {
         localStorage.setItem("theme", isLightTheme ? "light" : "dark");
@@ -745,6 +752,15 @@ const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 const weatherSection = document.querySelector("#weather");
 let weatherAnimationId = 0;
 let revealObserver;
+
+function scrollToCurrentWeather() {
+    closeSuggestions();
+    setMenuOpen(false);
+    weatherSection.scrollIntoView({
+        behavior: reducedMotion.matches ? "auto" : "smooth",
+        block: "start"
+    });
+}
 
 function animateWeatherUpdate() {
     weatherSection.classList.remove("weather-busy", "weather-refresh");

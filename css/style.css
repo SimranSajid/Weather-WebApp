@@ -124,7 +124,7 @@ body.light-theme {
 }
 
 .section-heading {
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     text-align: center;
 }
 
@@ -186,19 +186,22 @@ body.light-theme {
 }
 
 .theme-toggle {
-    order: -1;
-    width: 42px;
-    height: 42px;
+    position: relative;
+    margin-left: auto;
+    width: 72px;
+    height: 38px;
 
-    display: grid;
-    place-items: center;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 3px;
 
     flex-shrink: 0;
 
     border: 1px solid var(--border-color);
-    border-radius: 50%;
+    border-radius: 999px;
 
-    background-color: transparent;
+    background-color: var(--bg-primary);
     color: var(--text-primary);
 
     font-size: 1.15rem;
@@ -211,11 +214,36 @@ body.light-theme {
         transform var(--transition-speed);
 }
 
-.theme-toggle:hover {
-    background-color: var(--accent-transparent);
-    border-color: var(--accent-color);
+.theme-toggle__thumb {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: var(--accent);
+    transform: translateX(0);
+    transition: transform 250ms ease;
+}
 
-    transform: translateY(-2px);
+body.light-theme .theme-toggle__thumb {
+    transform: translateX(34px);
+}
+
+.theme-toggle__icon {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+}
+
+#weather {
+    scroll-margin-top: 83px;
+}
+
+@media (max-width: 650px) {
+    #weather { scroll-margin-top: 77px; }
 }
 
 .theme-toggle:focus-visible {
@@ -239,7 +267,7 @@ body.light-theme {
 }
 
 .nav-links {
-    margin-left: auto;
+    margin-left: 0;
 
     display: flex;
     align-items: center;
@@ -561,7 +589,7 @@ body.light-theme {
    ========================================================= */
 
 .weather-section {
-    padding: 5rem 0;
+    padding: 2.75rem 0;
 }
 
 
@@ -956,8 +984,6 @@ body.light-theme .footer-links a:hover {
     }
 
     .theme-toggle {
-        width: 38px;
-        height: 38px;
         order: 0;
         margin-left: auto;
         position: relative;
@@ -1275,7 +1301,7 @@ body .detail-card.reveal-settled {
 @media (hover: hover) and (pointer: fine) {
     .search-button:hover,
     .location-button:hover { transform: translateY(-2px) scale(1.02); }
-    .theme-toggle:hover { transform: scale(1.05) rotate(12deg); }
+    .theme-toggle:hover { transform: scale(1.02); box-shadow: 0 0 0 2px var(--accent-transparent); }
     body .detail-card.reveal-visible:hover,
     body .detail-card:not(.reveal):hover { transform: translateY(-4px); box-shadow: var(--shadow); }
     .detail-card:hover .detail-icon { transform: scale(1.06); }
